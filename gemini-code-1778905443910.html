@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sitio Web Oficial Premium | Decora con Shai S.A.S</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: linear-gradient(135deg, #fff0f6, #fcedf2, #f5e6fa);
+      color: #4a3b4e;
+      overflow-x: hidden;
+      perspective: 1600px;
+      min-height: 100vh;
+    }
+
+    /* CAPAS DE FONDO FLOTANTES 3D */
+    .bg-floating-layer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      transform-style: preserve-3d;
+    }
+
+    .balloon-3d {
+      position: absolute;
+      font-size: 3rem;
+      opacity: 0.12;
+      animation: floatUp 15s infinite ease-in-out;
+    }
+
+    /* CONTENEDOR DE SECCIONES (MATRIZ 3D) */
+    .sections-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+      z-index: 5;
+      transform-style: preserve-3d;
+    }
+
+    /* ESTILO BASE DE CADA PÁGINA */
+    .site-page {
+      display: none;
+      opacity: 0;
+      transform: translateZ(-200px) rotateX(-15deg);
+      transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      transform-style: preserve-3d;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      padding: 50px 40px;
+      border-radius: 35px;
+      box-shadow: 0 25px 55px rgba(179, 57, 130, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      margin-bottom: 40px;
+    }
+
+    /* PÁGINA ACTIVA EN PANTALLA */
+    .site-page.active-page {
+      display: block;
+      opacity: 1;
+      transform: translateZ(0) rotateX(0);
+    }
+
+    /* ENCABEZADOS DE PÁGINA */
+    .page-header {
+      text-align: center;
+      margin-bottom: 40px;
+      transform-style: preserve-3d;
+    }
+
+    .page-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.2rem;
+      color: #b33982;
+      text-shadow: 0 10px 25px rgba(179, 57, 130, 0.15);
+      transform: translateZ(40px);
+    }
+
+    .separator-decor {
+      font-size: 1.3rem;
+      color: #FF7F50;
+      margin-top: 10px;
+      transform: translateZ(20px);
+    }
+
+    /* TARJETAS INTERNAS (EFECTOS DE RELIEVE) */
+    .grid-2-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+      transform-style: preserve-3d;
+    }
+
+    .inner-card-3d {
+      background: white;
+      padding: 30px;
+      border-radius: 25px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.03);
+      border: 1px solid rgba(179, 57, 130, 0.1);
+      transform-style: preserve-3d;
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
+    }
+
+    .inner-card-3d:hover {
+      transform: translateY(-8px) rotateY(-5deg) translateZ(20px);
+      box-shadow: 0 25px 45px rgba(179, 57, 130, 0.12);
+    }
+
+    .paragraph-block {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      line-height: 1.8;
+      font-size: 1.05rem;
+    }
+
+    .paragraph-block:last-child { margin-bottom: 0; }
+    
+    .paragraph-block .emoji { font-size: 1.4rem; flex-shrink: 0; }
+
+    /* COMPONENTE DE IMÁGENES FLOTANTES */
+    .image-container-3d {
+      position: relative;
+      height: 380px;
+      transform-style: preserve-3d;
+    }
+
+    .img-frame {
+      position: absolute;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+      border: 4px solid white;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .frame-main { width: 80%; height: 260px; top: 0; left: 0; transform: translateZ(30px); z-index: 2; }
+    .frame-sub { width: 70%; height: 200px; bottom: 0; right: 0; transform: translateZ(10px) rotateZ(5deg); z-index: 1; }
+
+    .image-container-3d:hover .frame-main { transform: translateZ(60px) translateY(-5px) rotateY(-5deg); }
+    .image-container-3d:hover .frame-sub { transform: translateZ(25px) translateX(5px); }
+
+    .img-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* TABLAS DE COSTOS */
+    .premium-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+
+    .premium-table th, .premium-table td {
+      padding: 15px 20px;
+      text-align: left;
+    }
+
+    .premium-table th {
+      background: #b33982;
+      color: white;
+      font-weight: 500;
+    }
+
+    .premium-table tr:nth-child(even) { background: #fdf5f8; }
+
+    /* CITAS DE ESTILO (QUOTES) */
+    .quote-box {
+      margin-top: 20px;
+      padding: 20px;
+      border-left: 5px solid #b33982;
+      background: linear-gradient(to right, #fdf2f7, #f7f0fa);
+      border-radius: 12px;
+      font-style: italic;
+    }
+
+    /* BARRA DE NAVEGACIÓN FIJA INFERIOR INTERACTIVA */
+    .site-navigation-3d {
+      max-width: 1200px;
+      margin: 50px auto;
+      padding: 35px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 35px;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      transform-style: preserve-3d;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.02);
+    }
+
+    .nav-buttons-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      transform-style: preserve-3d;
+    }
+
+    .nav-btn {
+      display: inline-block;
+      text-decoration: none;
+      padding: 12px 20px;
+      background: white;
+      color: #5c4660;
+      font-weight: 500;
+      font-size: 0.9rem;
+      border-radius: 50px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(179, 57, 130, 0.15);
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform-style: preserve-3d;
+    }
+
+    .nav-btn.current-page, .nav-btn:hover {
+      background: linear-gradient(135deg, #b33982, #e0a3cd);
+      color: white;
+      border-color: transparent;
+      box-shadow: 0 12px 25px rgba(179, 57, 130, 0.25);
+      transform: translateY(-6px) translateZ(20px);
+    }
+
+    /* LISTA APA */
+    .apa-list {
+      list-style: none;
+    }
+    .apa-list li {
+      margin-bottom: 20px;
+      padding-left: 30px;
+      text-indent: -30px;
+      line-height: 1.8;
+    }
+
+    /* FOOTER */
+    footer {
+      background: #b33982;
+      color: white;
+      text-align: center;
+      padding: 35px 20px;
+      margin-top: 60px;
+    }
+
+    /* ANIMACIONES */
+    @keyframes floatUp {
+      0% { transform: translateY(110vh) translateZ(-150px) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.15; }
+      90% { opacity: 0.15; }
+      100% { transform: translateY(-20vh) translateZ(-30px) rotate(360deg); opacity: 0; }
+    }
+
+    @media(max-width: 950px) {
+      .grid-2-columns { grid-template-columns: 1fr; }
+      .image-container-3d { height: 300px; margin-top: 20px; }
+      .page-header h1 { font-size: 2.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-floating-layer">
+    <div class="balloon-3d" style="left: 5%; animation-delay: 0s; color: #ff4081;">🎈</div>
+    <div class="balloon-3d" style="left: 88%; animation-delay: 3s; color: #ab47bc;">🎉</div>
+    <div class="balloon-3d" style="left: 45%; animation-delay: 6s; color: #ffca28;">✨</div>
+  </div>
+
+  <div class="sections-wrapper">
+
+    <section id="inicio" class="site-page active-page">
+      <div class="page-header">
+        <h1>💖 Bienestar Laboral e Incentivos 💖</h1>
+        <div class="separator-decor">🎈══════༺💼༻══════🎈</div>
+      </div>
+      <div class="grid-2-columns">
+        <div class="inner-card-3d">
+          <div class="paragraph-block">
+            <span class="emoji">👑</span>
+            <p>Construyendo un equipo motivado a través de beneficios emocionales, experiencias familiares y tecnología enfocada en el crecimiento humano. 🎉✨</p>
+          </div>
+          <div class="paragraph-block">
+            <span class="emoji">🏆</span>
+            <p>En <strong>Decora con Shai S.A.S</strong>, cada estrategia de bienestar está diseñada para fortalecer la motivación, reconocer el esfuerzo y construir una cultura organizacional premium donde las personas crecen junto a la empresa.</p>
+          </div>
+          <div class="quote-box">🎉 Innovación + Bienestar + Incentivos = Éxito Organizacional Comprometido.</div>
+        </div>
+        <div class="image-container-3d">
+          <div class="img-frame frame-main"><img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=800&q=80"></div>
+          <div class="img-frame frame-sub"><img src="https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=800&q=80"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="historia" class="site-page">
+      <div class="page-header">
+        <h1>HISTORIA DE LA EMPRESA 🎀</h1>
+        <div class="separator-decor">🎈══════༺💼༻══════🎈</div>
+      </div>
+      <div class="grid-2-columns">
+        <div class="inner-card-3d">
+          <div class="paragraph-block">
+            <span class="emoji">✨</span>
+            <p><strong>DECORA CON SHAI S.A.S</strong> surgió durante la pandemia con el propósito de brindar alegría y sonrisas en momentos difíciles a través de una piñatería.</p>
+          </div>
+          <div class="paragraph-block">
+            <span class="emoji">🎨</span>
+            <p>Con esfuerzo, creatividad y visión empresarial, evolucionamos hasta convertirnos en una empresa dedicada a la decoración de fiestas y alquiler de mobiliario de lujo e infantil, ofreciendo experiencias personalizadas y memorables.</p>
+          </div>
+          <div class="paragraph-block">
+            <span class="emoji">🎀</span>
+            <p>Cada montaje representa nuestro compromiso con la calidad, la innovación y la felicidad de nuestros clientes.</p>
+          </div>
+          <div class="paragraph-block">
+            <span class="emoji">☀️</span>
+            <p>Hoy somos una marca en crecimiento que transforma ideas en celebraciones mágicas.</p>
+          </div>
+        </div>
+        <div class="image-container-3d">
+          <div class="img-frame frame-main"><img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=800&q=80"></div>
+          <div class="img-frame frame-sub"><img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=800&q=80"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="mision" class="site-page">
+      <div class="page-header">
+        <h1>🌟 Misión, Visión y Metas 🌟</h1>
+        <div class="separator-decor">🎈══════༺💼༻══════🎈</div>
+      </div>
+      <div class="grid-2-columns">
+        <div class="inner-card-3d">
+          <h3 style="color: #b33982; margin-bottom: 10px;">🎯 Nuestra Misión</h3>
+          <p style="margin-bottom: 20px; line-height: 1.8;">Crear atmósferas y ambientes mágicos de celebración que conecten emocionalmente con las familias, garantizando un servicio exclusivo con altos estándares estéticos y logísticos que superen las expectativas de nuestros clientes.</p>
+          
+          <h3 style="color: #b33982; margin-bottom: 10px;">👁️ Nuestra Visión</h3>
+          <p style="margin-bottom: 20px; line-height: 1.8;">Para el futuro, consolidarnos como la empresa líder en decoración de eventos de lujo y alquiler de mobiliario en la región, siendo reconocidos por nuestra innovación constante, calidez humana y la solidez de nuestra cultura organizacional.</p>
+        </div>
+        <div class="inner-card-3d">
+          <h3 style="color: #b33982; margin-bottom: 10px;">🏁 Metas Estratégicas</h3>
+          <div class="paragraph-block"><span class="emoji">📈</span><p>Alcanzar un nivel de satisfacción interna superior al 95% a través de programas permanentes de bienestar integral.</p></div>
+          <div class="paragraph-block"><span class="emoji">🤝</span><p>Establecer alianzas estratégicas logísticas para expandir el catálogo de eventos familiares corporativos e individuales.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="servicios" class="site-page">
+      <div class="page-header">
+        <h1>🎈 Servicios que Transforman Eventos 🎈</h1>
+        <div class="separator-decor">🎈══════༺💼༻══════🎈</div>
+      </div>
+      <div class="grid-2-columns">
+        <div class="inner-card-3d">
+          <div class="paragraph-block">
+            <span class="emoji">🏡</span>
+            <div>
+              <h4 style="color: #b33982;">Beneficio Familiar Exclusivo</h4>
+              <p>Ofrecemos un <strong>50% de descuento en eventos familiares</strong> para nuestros colaboradores, permitiendo que cada empleado celebre momentos memorables con sus seres queridos.</p>
+            </div>
+          </div>
+          <div class="paragraph-block">
+            <span class="emoji">🛋️</span>
+            <div>
+              <h4 style="color: #b33982;">Alquiler de Mobiliario de Lujo</h4>
+              <p>Líneas exclusivas de mobiliario infantil y de alta gala adaptadas a las tendencias estéticas globales y temáticas personalizadas.</p>
+            </div>
+          </div>
+          <div class="quote-box">📋 Nota: El equilibrio entre la vida familiar y laboral es el motor que impulsa la excelencia de nuestro servicio operativo.</div>
+        </div>
+        <div class="image-container-3d">
+          <div class="img-frame frame-main"><img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="onboarding" class="site-page">
+      <div class="page-header">
+        <h1>ONBOARDING Y CAPACITACIÓN 🎓</h1>
+        <div class="separator-decor">🎈══════༺💼༻══════🎈</div>
+      </div>
+      <div class="grid-2-columns">
+        <div class="inner-card-3d">
+          <div class="paragraph-block">
+            <span class="emoji">💻</span>
+            <p>Se propone la implementación de una <strong>Plataforma Interactiva de Bienestar</strong>, diseñada para recibir y guiar de forma cálida al nuevo talento humano de la empresa desde su primer día.</p>
+          </div>
+          <div class="paragraph-block">
+            <span class="emoji">🚀</span>
+            <p>Esta herramienta digital enviará mensajes motivacionales automáticos, estructurará microencuestas continuas sobre el clima organizacional y recopilará datos del estado de ánimo del equipo en tiempo real.</p>
+          </div>
+          <div class="paragraph-block">
+            <span class="emoji">🎁</span>
+            <p><strong>Sistema de Puntos Canjeables:</strong> A través de la participación activa en los módulos interactivos de capacitación, los trabajadores sumarán puntos que podrán cambiar por incentivos tangibles como bonos o valiosos días libres.</p>
+          </div>
+        </div>
+        <div class="inner-card-3d" style="background: linear-gradient(135deg, #fff, #fdf0f6);">
+          <h3 style="color: #b33982; margin-bottom: 15px; text-align: center;">Estructura del Programa</h3>
+          <p>1. Inmersión Cultural 🎀 (Día 1)<br>2. Formación en Estándares Estéticos 🎨 (Semana 1)<br>3. Prácticas de Logística Segura 💼 (Semana 2)</p>
+          <div class="quote-box">✨ Escuchar, motivar y recompensar transforma el clima laboral de manera definitiva.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="costos" class="site-page">
+      <div class="page-header">
+        <h1>💎 Costos del Desarrollo Organizacional 💎</h1>
+        <div class="separator-decor">🎈══════༺💼༻══════🎈</div>
+      </div>
+      <p style="margin-bottom: 25px; text-align: center; font-size: 1.1rem;">Presupuesto estratégico proyectado para la viabilidad financiera e implantación del plan de bienestar integral en Decora con Shai S.A.S:</p>
+      <table class="premium-table">
+        <thead>
+          <tr>
+            <th>Programa de Incentivos / Herramienta</th>
+            <th>Descripción Operativa</th>
+            <th>Costo Trimestral Proyectado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Descuento Familiar del 50%</td>
+            <td>Subsidio de eventos familiares directos del empleado</td>
+            <td>Inversión de Valor Interno</td>
+          </tr>
+          <tr>
+            <td>Plataforma Gamificada de Bienestar</td>
+            <td>Suscripción de software interactivo de clima y métricas</td>
+            <td>Soporte Tecnológico Especializado</td>
+          </tr>
+          <tr>
+            <td>Bonos y Canjes de Días Libres</td>
+            <td>Fondo de compensación por desempeño y participación</td>
+            <td>Incentivo al Talento Humano</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="conclusion" class="site-page">
+      <div class="page-header">
+        <h1>💎 Conclusión 💎</h1>
+        <div class="separator-decor">🎈══════༺💼༻══════🎈</div>
+      </div>
+      <div class="inner-card-3d" style="max-width: 900px; margin: 0 auto;">
+        <div class="paragraph-block">
+          <span class="emoji">🏁</span>
+          <p>El diseño e implementación de un sistema estructurado de incentivos no representa un gasto operativo, sino una inversión de alto rendimiento sobre el capital humano. En el rubro de la decoración de eventos, donde la sensibilidad estética y el trato con el cliente son determinantes, la estabilidad emocional del colaborador se traduce directamente en la calidad del servicio.</p>
+        </div>
+        <div class="paragraph-block">
+          <span class="emoji">⭐</span>
+          <p>Al integrar tecnología avanzada con el reconocimiento explícito a las familias, Decora con Shai S.A.S establece un modelo de gestión vanguardista, garantizando un clima laboral óptimo y asegurando su competitividad sostenible en el mercado regional.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="fuentes" class="site-page">
+      <div class="page-header">
+        <h1>📖 Fuentes de Consulta | APA 📖</h1>
+        <div class="separator-decor">🎈══════༺💼༻══════🎈</div>
+      </div>
+      <div class="inner-card-3d" style="max-width: 950px; margin: 0 auto;">
+        <ul class="apa-list">
+          <li>Chiavenato, I. (2020). <i>Gestión del Talento Humano: El nuevo papel de los recursos humanos en las organizaciones</i> (5a ed.). McGraw-Hill.</li>
+          <li>Decora con Shai S.A.S. (2026). <i>Manual de Identidad Institucional, Cultura Organizacional y Registro de Procesos Logísticos Internos</i>. Documentación interna no publicada.</li>
+          <li>Alles, M. A. (2018). <i>Desempeño por competencias: Evaluación de 360°</i>. Granica.</li>
+          <li>Robbins, S. P., & Judge, T. A. (2017). <i>Comportamiento organizacional</i> (17a ed.). Pearson Educación.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="site-navigation-3d">
+      <h3 class="nav-title">🌐 Navegación del Sitio Web</h3>
+      <div class="nav-buttons-container">
+        <button class="nav-btn current-page" onclick="navigateTo('inicio', this)">🎈 INICIO 🎈</button>
+        <button class="nav-btn" onclick="navigateTo('historia', this)">HISTORIA DE LA EMPRESA 🎀</button>
+        <button class="nav-btn" onclick="navigateTo('mision', this)">🌟 Mision, Vision y Metas 🌟</button>
+        <button class="nav-btn" onclick="navigateTo('servicios', this)">🎈 Servicios que Transforman Eventos 🎈</button>
+        <button class="nav-btn" onclick="navigateTo('onboarding', this)">ONBOARDING Y CAPACACION 🎓</button>
+        <button class="nav-btn" onclick="navigateTo('costos', this)">💎 Costos del Desarrollo Organizacional 💎</button>
+        <button class="nav-btn" onclick="navigateTo('conclusion', this)">💎 Conclusion 💎</button>
+        <button class="nav-btn" onclick="navigateTo('fuentes', this)">📖 Fuentes de Consulta | APA 📖</button>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>💼 Decora con Shai S.A.S | Bienestar Laboral Premium</p>
+    <p>✨ Motivamos personas, construimos experiencias, fortalecemos empresa. ✨</p>
+  </footer>
+
+  <script>
+    function navigateTo(sectionId, element) {
+      // 1. Quitar la clase activa de todos los botones de navegación
+      const buttons = document.querySelectorAll('.nav-btn');
+      buttons.forEach(btn => btn.classList.remove('current-page'));
+      
+      // Añadir clase al botón seleccionado
+      element.classList.add('current-page');
+
+      // 2. Transición 3D de salida para la página activa actual
+      const activePage = document.querySelector('.site-page.active-page');
+      if (activePage) {
+        activePage.style.transform = 'translateZ(-300px) rotateY(20deg)';
+        activePage.style.opacity = '0';
+        
+        setTimeout(() => {
+          activePage.classList.remove('active-page');
+          
+          // 3. Entrada triunfal de la nueva página seleccionada
+          const targetPage = document.getElementById(sectionId);
+          targetPage.classList.add('active-page');
+          
+          // Pequeño delay para forzar el render de la animación
+          setTimeout(() => {
+            targetPage.style.transform = 'translateZ(0) rotateX(0)';
+            targetPage.style.opacity = '1';
+          }, 50);
+          
+        }, 400); // Duración exacta de la animación de salida
+      }
+      
+      // Auto-scroll suave hacia la cabecera para mejorar la experiencia de usuario
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+
+</body>
+</html>
